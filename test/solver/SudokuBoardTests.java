@@ -1,12 +1,10 @@
 package solver;
 
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,7 +13,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-public class TestSudokuBoard {
+public class SudokuBoardTests {
     
     SudokuIO ioHandler = new SudokuSimpleStringIO();
     
@@ -91,9 +89,9 @@ public class TestSudokuBoard {
         Map<String, Character> board3 = null;
 
         try {
-            board1 = board.ioHandler.parseBoard(boardString1, board.ROW_INDICES, board.COLUMN_INDICES);
-            board2 = board.ioHandler.parseBoard(boardString2, board.ROW_INDICES, board.COLUMN_INDICES);
-            board3 = board.ioHandler.parseBoard(boardString3, board.ROW_INDICES, board.COLUMN_INDICES);
+            board1 = board.ioHandler.parseBoard(boardString1, board.getRowIndices(), board.getColumnIndices());
+            board2 = board.ioHandler.parseBoard(boardString2, board.getRowIndices(), board.getColumnIndices());
+            board3 = board.ioHandler.parseBoard(boardString3, board.getRowIndices(), board.getColumnIndices());
         } catch (BoardParsingException e) {
             e.printStackTrace();
             fail("BoardParsingException thrown");
@@ -115,7 +113,7 @@ public class TestSudokuBoard {
         
         
         try {
-            board.ioHandler.parseBoard(boardTooShort, board.ROW_INDICES, board.COLUMN_INDICES);
+            board.ioHandler.parseBoard(boardTooShort, board.getRowIndices(), board.getColumnIndices());
             fail("Exception should have been thrown but wasn't");
         } catch (BoardParsingException e) {
         }
@@ -125,7 +123,7 @@ public class TestSudokuBoard {
         
         
         try {
-            board.ioHandler.parseBoard(boardTooLong, board.ROW_INDICES, board.COLUMN_INDICES);
+            board.ioHandler.parseBoard(boardTooLong, board.getRowIndices(), board.getColumnIndices());
             fail("Exception should have been thrown but wasn't");
         } catch (BoardParsingException e) {
         }

@@ -12,7 +12,7 @@ public class SudokuSolver {
 
     public void processInitialBoard(SudokuBoard board) {
         this.board = board;
-        for(String square : this.board.SQUARE_INDICES) {
+        for(String square : this.board.getSquareIndices()) {
             if(this.board.getInitialBoard().get(square) != null) {
                 assign(this.board.getCurrentBoard(), square, this.board.getInitialBoard().get(square));
             }
@@ -30,13 +30,13 @@ public class SudokuSolver {
         
         if(possibleValuesOnSquare.size() == 1) { //Remove possible value for peers
             Character lastRemainingValue = possibleValuesOnSquare.toArray(new Character[1])[0];
-            for(String peer : this.board.SQUARE_PEERS.get(square)) {
+            for(String peer : this.board.getSquarePeers().get(square)) {
                 boolean boardIsValid = eliminate(currentBoard,  peer, lastRemainingValue);
                 if(!boardIsValid) return false;
             }
         }
         
-        for(Collection<String> unit : this.board.SQUARE_UNIT_RELATIONS.get(square)) {
+        for(Collection<String> unit : this.board.getSquareUnitRelations().get(square)) {
             List<String> squaresForValueInUnit = unit.stream().filter(squareInUnit -> currentBoard.get(squareInUnit).contains(value))
                     .collect(Collectors.toList());
             
@@ -95,7 +95,7 @@ public class SudokuSolver {
     private String getUnsolvedSquareWithMinNumberOfRemainingValues(Map<String, Collection<Character>> currentBoard) {
         String minSquare = null;
         int minSquareNumberOfRemainingValues = Integer.MAX_VALUE;
-        for(String square : this.board.SQUARE_INDICES) {
+        for(String square : this.board.getSquareIndices()) {
             int currentSquareNumberOfRemainingValues = currentBoard.get(square).size();
             if(currentSquareNumberOfRemainingValues < minSquareNumberOfRemainingValues && currentSquareNumberOfRemainingValues > 1) {
                 minSquare = square;
@@ -106,7 +106,7 @@ public class SudokuSolver {
     }
 
     private boolean isBoardSolved(Map<String, Collection<Character>> currentBoard) {
-        for(String square : this.board.SQUARE_INDICES) {
+        for(String square : this.board.getSquareIndices()) {
             if(currentBoard.get(square).size() != 1) return false;
         }
         return true;

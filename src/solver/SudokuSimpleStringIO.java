@@ -54,12 +54,12 @@ public class SudokuSimpleStringIO implements SudokuIO{
 
     @Override
     public String makeStringRepresentation(SudokuBoard board) {
-        int cellWidth = 1 + board.SQUARE_INDICES.stream().flatMapToInt(square -> IntStream.of(board.getCurrentBoard().get(square).size())).max().getAsInt();
-        String separatingLine = makeSeparatingLine(cellWidth, board.COLUMN_INDICES.length);
+        int cellWidth = 1 + board.getSquareIndices().stream().flatMapToInt(square -> IntStream.of(board.getCurrentBoard().get(square).size())).max().getAsInt();
+        String separatingLine = makeSeparatingLine(cellWidth, board.getColumnIndices().length);
         
         StringBuilder displayableGrid = new StringBuilder();
-        for(char row : board.ROW_INDICES) {
-            for(char column : board.COLUMN_INDICES) {
+        for(char row : board.getRowIndices()) {
+            for(char column : board.getColumnIndices()) {
                 displayableGrid.append(StringUtils.center(
                         board.getCurrentBoard().get("" + row + column).stream().map(String::valueOf).collect(Collectors.joining()),
                         cellWidth
