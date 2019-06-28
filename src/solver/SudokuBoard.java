@@ -13,10 +13,10 @@ public class SudokuBoard {
     private Map<String, Collection<Collection<String>>> squareUnitRelations;
     private Map<String, Collection<String>> squarePeers;
     
+    private Map<String, Character> initialBoard;
     private Map<String, Collection<Character>> currentBoard;
     
     public SudokuIO ioHandler;
-    private Map<String, Character> initialBoard;
     
     public SudokuBoard() {
         
