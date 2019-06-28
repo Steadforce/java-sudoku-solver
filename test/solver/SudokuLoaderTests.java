@@ -4,10 +4,10 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
-public class TestSudokuLoader {
+public class SudokuLoaderTests {
 
     @Test
-    public void getEasySudokuBoardTest() {
+    public void testGetEasySudokuBoard() {
         SudokuLoader loader = new SudokuLoader();
         
         
@@ -19,7 +19,7 @@ public class TestSudokuLoader {
     
     
     @Test
-    public void getHardSudokuBoardTest() {
+    public void testGetHardSudokuBoard() {
         SudokuLoader loader = new SudokuLoader();
         
         
@@ -31,7 +31,7 @@ public class TestSudokuLoader {
     
     
     @Test
-    public void getVeryHardSudokuBoardTest() {
+    public void testGetVeryHardSudokuBoard() {
         SudokuLoader loader = new SudokuLoader();
         
         

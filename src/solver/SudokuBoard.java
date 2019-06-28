@@ -1,26 +1,27 @@
 package solver;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class SudokuBoard {
-    public final char[] ROW_INDICES = "ABCDEFGHI".toCharArray();
-    public final char[] COLUMN_INDICES = "123456789".toCharArray();
-    public final Collection<String> SQUARE_INDICES = crossArrays(ROW_INDICES, COLUMN_INDICES);
-    public final Collection<Collection<String>> UNITS = makeUnitCollection();
-    public final Map<String, Collection<Collection<String>>> SQUARE_UNIT_RELATIONS = makeSquareUnitRelations(SQUARE_INDICES, UNITS);
-    public final Map<String, Collection<String>> SQUARE_PEERS = makeSquarePeers(SQUARE_INDICES, SQUARE_UNIT_RELATIONS);
+    private char[] allowedValues;
+    private char[] rowIndices;
+    private char[] columnIndices;
+    private Collection<String> squareIndices;
+    private Collection<Collection<String>> units;
+    private Map<String, Collection<Collection<String>>> squareUnitRelations;
+    private Map<String, Collection<String>> squarePeers;
     
+    private Map<String, Character> initialBoard;
     private Map<String, Collection<Character>> currentBoard;
     
     public SudokuIO ioHandler;
-    private Map<String, Character> initialBoard;
+    
+    public SudokuBoard() {
+        
+    }
+
     public SudokuBoard(SudokuIO ioHandler) {
         this.ioHandler = ioHandler;
     }
@@ -35,112 +36,90 @@ public class SudokuBoard {
     }
 
     public void setInitialBoard(String boardRepresentation) throws BoardParsingException {
-        setInitialBoard(this.ioHandler.parseBoard(boardRepresentation, this.ROW_INDICES, this.COLUMN_INDICES));
+        setInitialBoard(this.ioHandler.parseBoard(boardRepresentation, this.getRowIndices(), this.getColumnIndices()));
     }
 
     public void setInitialBoard(Map<String, Character> initialBoard) {
         this.initialBoard = initialBoard;
-        this.setCurrentBoard(initializeCurrentBoard());
     }
 
-    private Map<String, Collection<Character>> initializeCurrentBoard() {
-        Map<String, Collection<Character>> currentBoard = new HashMap<String, Collection<Character>>();
-        getInitialBoard().forEach((key,value) -> currentBoard.put(key, "123456789".chars().mapToObj(e->Character.valueOf((char) e)).collect(Collectors.toList())));
+    public Map<String, Collection<Character>> getCurrentBoard() {
         return currentBoard;
     }
 
-    public Collection<Collection<String>> makeUnitCollection() {
-        Collection<Collection<String>> unitCollection = new ArrayList<Collection<String>>(27);
-        addRowUnits(unitCollection);
-        addColumnUnits(unitCollection);
-        addSquareUnits(unitCollection);
-        return unitCollection;
-    }
-
-    public Map<String, Collection<Collection<String>>> makeSquareUnitRelations(Collection<String> squares, Collection<Collection<String>> unitCollection) {
-        Map<String, Collection<Collection<String>>> squareUnitRelations = new HashMap<String, Collection<Collection<String>>>();
-        for(String square : squares) {
-            Collection<Collection<String>> unitsOfSquare = new ArrayList<Collection<String>>();
-            for(Collection<String> unit : unitCollection) {
-                if(unit.contains(square)) {
-                    unitsOfSquare.add(unit);
-                }
-            }
-            squareUnitRelations.put(square, unitsOfSquare);
-        }
-        return squareUnitRelations;
-    }
-
-    public Map<String, Collection<String>> makeSquarePeers(Collection<String> squares,
-            Map<String, Collection<Collection<String>>> units) {
-        Map<String, Collection<String>> peersPerSquare = new HashMap<String, Collection<String>>();
-        
-        for(String square : squares) {
-            
-            Set<String> peersWithoutDuplicates = new HashSet<String>();
-            for(Collection<String> unit : units.get(square)) {
-                peersWithoutDuplicates.addAll(unit);
-            }
-            peersWithoutDuplicates.remove(square);
-            
-            peersPerSquare.put(square, peersWithoutDuplicates);
-        }
-        
-        return peersPerSquare;
-    }
-
-    private void addRowUnits(Collection<Collection<String>> unitCollection) {
-        for(char row : ROW_INDICES) {
-            Collection<String> unit = new ArrayList<String>(COLUMN_INDICES.length);
-            for(char column : COLUMN_INDICES) {
-                unit.add("" + row + column);
-            }
-            unitCollection.add(unit);
-        }
-    }
-
-    private void addColumnUnits(Collection<Collection<String>> unitCollection) {
-        for(char column : COLUMN_INDICES) {
-            Collection<String> unit = new ArrayList<String>(ROW_INDICES.length);
-            for(char row : ROW_INDICES) {
-                unit.add("" + row + column);
-            }
-            unitCollection.add(unit);
-        }
-    }
-
-    private void addSquareUnits(Collection<Collection<String>> unitCollection) {
-        for(char[] squareRows : Arrays.asList("ABC".toCharArray(), "DEF".toCharArray(), "GHI".toCharArray())) {
-            for(char[] squareColumns : Arrays.asList("123".toCharArray(), "456".toCharArray(), "789".toCharArray())) {
-                Collection<String> unit = crossArrays(squareRows, squareColumns);
-                unitCollection.add(unit);
-            }
-        }
-    }
-
-    public Collection<String> crossArrays(char[] array1, char[] array2) {
-        Collection<String> crossedCollection = new ArrayList<String>(array1.length*array2.length);
-        for(char elem1 : array1) {
-            for(char elem2 : array2) {
-                crossedCollection.add("" + elem1 + elem2);
-            }
-        }
-        return crossedCollection;
+    protected void setCurrentBoard(Map<String, Collection<Character>> currentBoard) {
+        this.currentBoard = currentBoard;
     }
 
     public String makeDisplayable() {
         return this.ioHandler.makeStringRepresentation(this);
     }
 
+    public char[] getAllowedValues() {
+        return allowedValues;
+    }
+
+    public void setAllowedValues(char[] allowedValues) {
+        this.allowedValues = allowedValues;
+    }
+
+    public char[] getRowIndices() {
+        return rowIndices;
+    }
+
+    public void setRowIndices(char[] rowIndices) {
+        this.rowIndices = rowIndices;
+    }
+
+    public char[] getColumnIndices() {
+        return columnIndices;
+    }
+
+    public void setColumnIndices(char[] columnIndices) {
+        this.columnIndices = columnIndices;
+    }
+
+    public Collection<String> getSquareIndices() {
+        return squareIndices;
+    }
+
+    public void setSquareIndices(Collection<String> squareIndices) {
+        this.squareIndices = squareIndices;
+    }
+
+    public Collection<Collection<String>> getUnits() {
+        return units;
+    }
+
+    public void setUnits(Collection<Collection<String>> units) {
+        this.units = units;
+    }
+
+    public Map<String, Collection<Collection<String>>> getSquareUnitRelations() {
+        return squareUnitRelations;
+    }
+
+    public void setSquareUnitRelations(Map<String, Collection<Collection<String>>> squareUnitRelations) {
+        this.squareUnitRelations = squareUnitRelations;
+    }
+
+    public Map<String, Collection<String>> getSquarePeers() {
+        return squarePeers;
+    }
+
+    public void setSquarePeers(Map<String, Collection<String>> squarePeers) {
+        this.squarePeers = squarePeers;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Arrays.hashCode(COLUMN_INDICES);
-        result = prime * result + Arrays.hashCode(ROW_INDICES);
-        result = prime * result + ((SQUARE_INDICES == null) ? 0 : SQUARE_INDICES.hashCode());
-        result = prime * result + ((SQUARE_UNIT_RELATIONS == null) ? 0 : SQUARE_UNIT_RELATIONS.hashCode());
-        result = prime * result + ((UNITS == null) ? 0 : UNITS.hashCode());
+        result = prime * result + Arrays.hashCode(getColumnIndices());
+        result = prime * result + Arrays.hashCode(getRowIndices());
+        result = prime * result + ((getSquareIndices() == null) ? 0 : getSquareIndices().hashCode());
+        result = prime * result + ((getSquareUnitRelations() == null) ? 0 : getSquareUnitRelations().hashCode());
+        result = prime * result + ((getUnits() == null) ? 0 : getUnits().hashCode());
         result = prime * result + ((getInitialBoard() == null) ? 0 : getInitialBoard().hashCode());
         return result;
     }
@@ -159,33 +138,25 @@ public class SudokuBoard {
                 return false;
         } else if (!getInitialBoard().equals(other.getInitialBoard()))
             return false;
-        if (!Arrays.equals(COLUMN_INDICES, other.COLUMN_INDICES))
+        if (!Arrays.equals(getColumnIndices(), other.getColumnIndices()))
             return false;
-        if (!Arrays.equals(ROW_INDICES, other.ROW_INDICES))
+        if (!Arrays.equals(getRowIndices(), other.getRowIndices()))
             return false;
-        if (SQUARE_INDICES == null) {
-            if (other.SQUARE_INDICES != null)
+        if (getSquareIndices() == null) {
+            if (other.getSquareIndices() != null)
                 return false;
-        } else if (!SQUARE_INDICES.equals(other.SQUARE_INDICES))
+        } else if (!getSquareIndices().equals(other.getSquareIndices()))
             return false;
-        if (SQUARE_UNIT_RELATIONS == null) {
-            if (other.SQUARE_UNIT_RELATIONS != null)
+        if (getSquareUnitRelations() == null) {
+            if (other.getSquareUnitRelations() != null)
                 return false;
-        } else if (!SQUARE_UNIT_RELATIONS.equals(other.SQUARE_UNIT_RELATIONS))
+        } else if (!getSquareUnitRelations().equals(other.getSquareUnitRelations()))
             return false;
-        if (UNITS == null) {
-            if (other.UNITS != null)
+        if (getUnits() == null) {
+            if (other.getUnits() != null)
                 return false;
-        } else if (!UNITS.equals(other.UNITS))
+        } else if (!getUnits().equals(other.getUnits()))
             return false;
         return true;
-    }
-
-    public Map<String, Collection<Character>> getCurrentBoard() {
-        return currentBoard;
-    }
-
-    protected void setCurrentBoard(Map<String, Collection<Character>> currentBoard) {
-        this.currentBoard = currentBoard;
     }
 }

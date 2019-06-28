@@ -1,10 +1,10 @@
 package solver;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,14 +12,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class TestSudokuSolver {
+public class SudokuSolverTests {
     
     SudokuIO ioHandler = new SudokuSimpleStringIO();
+    BoardFactory boardFactory9x9 = new NineByNineBoardFactory();
 
     @Test
-    public void deepcopyBoardMap() {
+    public void testDeepcopyBoardMap() {
         Map<String, Collection<Character>> currentBoard = new HashMap<String, Collection<Character>>();
         currentBoard.put("A1", new ArrayList<>(Arrays.asList('1','2','3')));
         currentBoard.put("C3", new ArrayList<>(Arrays.asList('4','5','6')));
@@ -54,9 +56,14 @@ public class TestSudokuSolver {
                 ". 1 7 |. . . |. . . \n" + 
                 ". . . |. 3 6 |. 4 . \n";
         SudokuSolver solver = new SudokuSolver();
-        SudokuBoard board = new SudokuBoard(ioHandler, boardInputString);
+        SudokuBoard board = boardFactory9x9.generateNewBoard(ioHandler);
+        boardFactory9x9.fillBoard(board, boardInputString);
+        
+        
         solver.processInitialBoard(board);
         boolean solverReturnValue = solver.solveBoard();
+        
+        
         String boardDisplayString =
                 "8 5 9 |6 1 2 |4 3 7 \n" + 
                 "7 2 3 |8 5 4 |1 6 9 \n" + 
@@ -69,7 +76,6 @@ public class TestSudokuSolver {
                 "4 3 2 |9 8 1 |6 7 5 \n" + 
                 "6 1 7 |4 2 5 |8 9 3 \n" + 
                 "5 9 8 |7 3 6 |2 4 1 \n";
-        
         
         assertTrue(solverReturnValue);
         assertEquals(boardDisplayString, board.makeDisplayable());
@@ -91,9 +97,14 @@ public class TestSudokuSolver {
                 ". . . |. . . |. . . \r\n" + 
                 ". . . |. . . |. . . ";
         SudokuSolver solver = new SudokuSolver();
-        SudokuBoard board = new SudokuBoard(ioHandler, boardInputString);
+        SudokuBoard board = boardFactory9x9.generateNewBoard(ioHandler);
+        boardFactory9x9.fillBoard(board, boardInputString);
+        
+        
         solver.processInitialBoard(board);
         boolean solverReturnValue = solver.solveBoard();
+        
+        
         String boardDisplayString =
                 "4 3 8 |7 9 6 |2 1 5 \n" + 
                 "6 5 9 |1 3 2 |4 7 8 \n" + 
@@ -107,14 +118,13 @@ public class TestSudokuSolver {
                 "3 6 2 |9 8 7 |5 4 1 \n" + 
                 "5 8 7 |6 4 1 |9 3 2 \n";
         
-        
         assertTrue(solverReturnValue);
         assertEquals(boardDisplayString, board.makeDisplayable());
     }
     
-    
+    @Ignore
     @Test
-    public void solverTest_infeasiblePuzzle2() throws BoardParsingException {
+    public void solverTest_infeasiblePuzzle() throws BoardParsingException {
         String boardInputString =
                 ". . . |. . 5 |. 8 . \r\n" + 
                 ". . . |6 . 1 |. 4 3 \r\n" + 
@@ -128,7 +138,9 @@ public class TestSudokuSolver {
                 ". . . |. . . |. . 4 \r\n" + 
                 ". . . |. . . |. . . ";
         SudokuSolver solver = new SudokuSolver();
-        SudokuBoard board = new SudokuBoard(ioHandler, boardInputString);
+        SudokuBoard board = boardFactory9x9.generateNewBoard(ioHandler);
+        boardFactory9x9.fillBoard(board, boardInputString);
+        
         solver.processInitialBoard(board);
         boolean solverReturnValue = solver.solveBoard();
         

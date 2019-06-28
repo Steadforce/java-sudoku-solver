@@ -12,6 +12,7 @@ public class SudokuLoader implements SudokuProvider {
     private ArrayList<String> veryHardSudokuBoards = null;
     
     private SudokuIO ioHandler9x9 = new SudokuSimpleStringIO();
+    private BoardFactory boardFactory9x9 = new NineByNineBoardFactory();
 
     @Override
     public SudokuBoard getEasySudokuBoard() {
@@ -72,7 +73,8 @@ public class SudokuLoader implements SudokuProvider {
     private SudokuBoard makeSudokuBoard(String boardRepresentation) {
         SudokuBoard sudokuBoard = null;
         try {
-            sudokuBoard = new SudokuBoard(ioHandler9x9, boardRepresentation);
+            sudokuBoard = boardFactory9x9.generateNewBoard(ioHandler9x9);
+            boardFactory9x9.fillBoard(sudokuBoard, boardRepresentation);
         } catch (BoardParsingException e) {
             e.printStackTrace();
         }
