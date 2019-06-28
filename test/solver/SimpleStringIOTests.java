@@ -21,7 +21,7 @@ public class SimpleStringIOTests {
     }
     
     @Test
-    public void parseBoardTest() {
+    public void testParseBoard() {
         SudokuIO ioHandler = new SudokuSimpleStringIO();
         String boardString1 = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......";
         String boardString2 = "400000805\n030000000\n000700000\n020000060\n000080400\n000010000\n000603070\n500200000\n104000000";
@@ -61,7 +61,7 @@ public class SimpleStringIOTests {
     }
     
     @Test
-    public void parseBoardTest_invalidBoards() {
+    public void testParseBoard_invalidBoards() {
         SudokuIO ioHandler = new SudokuSimpleStringIO();
         String boardTooShort = "4.....8.5.3..........7......2.....6.....8.4......1......6.3.7.5..2.....1.4......";
         

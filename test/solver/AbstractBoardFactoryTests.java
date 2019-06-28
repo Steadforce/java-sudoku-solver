@@ -14,7 +14,7 @@ import org.junit.Test;
 public class AbstractBoardFactoryTests {
 
     @Test
-    public void crossArraysTest() {
+    public void testCrossArrays() {
         char[] array1 = "AB".toCharArray();
         char[] array2 = "12".toCharArray();
         
@@ -26,7 +26,7 @@ public class AbstractBoardFactoryTests {
     }
     
     @Test
-    public void makeSquareUnitRelationsTest() {
+    public void testMakeSquareUnitRelations() {
         Collection<String> squares = Arrays.asList("A1","A2","B1","B2");
         Collection<Collection<String>> unitCollection =
                 Arrays.asList(Arrays.asList("A1","A2"), Arrays.asList("A1","B2"), Arrays.asList("A2","B2"));

@@ -15,13 +15,13 @@ import java.util.Map;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class TestSudokuSolver {
+public class SudokuSolverTests {
     
     SudokuIO ioHandler = new SudokuSimpleStringIO();
     BoardFactory boardFactory9x9 = new NineByNineBoardFactory();
 
     @Test
-    public void deepcopyBoardMap() {
+    public void testDeepcopyBoardMap() {
         Map<String, Collection<Character>> currentBoard = new HashMap<String, Collection<Character>>();
         currentBoard.put("A1", new ArrayList<>(Arrays.asList('1','2','3')));
         currentBoard.put("C3", new ArrayList<>(Arrays.asList('4','5','6')));
