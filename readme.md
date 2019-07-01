@@ -6,11 +6,11 @@ was done by [Simon Schmitz](mailto:simon.schmitz@steadforce.com) at [Steadforce 
 
 ## Data Structure
 
-The data used by the solver is represented in class `SudokuBoard`.
+The data used by the solver is represented in the class `SudokuBoard`.
 One field to put a number is called a square. Squares are referenced using a string
 which is composed from its row (letters A-I) and column (numbers 1-9).
-These square indices are provided by the constant
-`Collection<String> SQUARE_INDICES`.
+These square indices are provided by the field
+`Collection<String> squareIndices`.
 
 ```
  A1 A2 A3| A4 A5 A6| A7 A8 A9
@@ -29,15 +29,15 @@ These square indices are provided by the constant
 To solve a Sudoku, each row, column and indicated 3-by-3 block have to contain
 the values 1 to 9, no values can occur more than once. Each such row, column or block
 is called a unit. So a unit is a set of squares and the set of all units
-is provided by the constant `Collection<Collection<String>> UNITS`.
+is provided by the constant `Collection<Collection<String>> units`.
 
 For each square, we save the units it belongs to in the hashmap
-`Map<String, Collection<Collection<String>>> SQUARE_UNIT_RELATIONS`.
+`Map<String, Collection<Collection<String>>> squareUnitRelations`.
 Let's for example consider the field C2. It belongs to the units defined by its row,
-column and block. These units can be accessed using `SQUARE_UNIT_RELATIONS("C2")`.
+column and block. These units can be accessed using `squareUnitRelations.get("C2")`.
 The field belongs to the units as shown below.
 The union of all squares contained in the units of C2 are its peers
-(`Map<String, Collection<String>> SQUARE_PEERS`).
+(`Map<String, Collection<String>> squarePeers`).
 
 ```
     A2   |         |                    |         |            A1 A2 A3|         |         
@@ -56,7 +56,8 @@ The union of all squares contained in the units of C2 are its peers
 # Importing a board
 
 To import a board from a string, any parser implementing the interface `SudokuIO`
-can be used. The class `SudokuSimpleStringIO` provides one possible implementation
+can be used. The parser to use is injected into each instance of a board by passing it to the factory merhod.
+The class `SudokuSimpleStringIO` provides one possible implementation
 to parse boards as follows:
 * The parser fills the board starting with the first row, inserting values for each column
 and continuing with the next row, until all rows are filled.
@@ -150,10 +151,15 @@ String boardInputString =
         ". . . |3 2 5 |. . 6 \r\n" + 
         ". . . |. . . |. . . \r\n" + 
         ". . . |. . . |. . . ";
-SudokuSolver solver = new SudokuSolver();
 SudokuIO ioHandler = new SudokuSimpleStringIO();
-SudokuBoard board = new SudokuBoard(ioHandler, boardInputString);
-boolean solverReturnValue = solver.solveBoard(board);
+BoardFactory boardFactory9x9 = new NineByNineBoardFactory();
+SudokuSolver solver = new SudokuSolver();
+
+SudokuBoard board = boardFactory9x9.generateNewBoard(ioHandler);
+boardFactory9x9.fillBoard(board, boardInputString);
+solver.processInitialBoard(board);
+boolean solverReturnValue = solver.solveBoard();
+
 String boardDisplayString =
         "4 3 8 |7 9 6 |2 1 5 \n" + 
         "6 5 9 |1 3 2 |4 7 8 \n" + 
@@ -166,8 +172,6 @@ String boardDisplayString =
         "1 9 4 |3 2 5 |7 8 6 \n" + 
         "3 6 2 |9 8 7 |5 4 1 \n" + 
         "5 8 7 |6 4 1 |9 3 2 \n";
-
-
 assertTrue(solverReturnValue);
 assertEquals(boardDisplayString, board.makeDisplayable());
 ```
