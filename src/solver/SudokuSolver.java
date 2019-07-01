@@ -10,25 +10,43 @@ public class SudokuSolver {
     
     private SudokuBoard board;
 
+    public boolean solveBoard(SudokuBoard board) {
+        processInitialBoard(board);
+        board.setCurrentBoard(performSearch(board.getCurrentBoard()));
+        return board.getCurrentBoard() != null && isBoardSolved(board.getCurrentBoard());
+    }
+
     public void processInitialBoard(SudokuBoard board) {
         this.board = board;
-        for(String square : this.board.getSquareIndices()) {
-            if(this.board.getInitialBoard().get(square) != null) {
-                assign(this.board.getCurrentBoard(), square, this.board.getInitialBoard().get(square));
+        for(String square : board.getSquareIndices()) {
+            if(board.getInitialBoard().get(square) != null) {
+                assign(board.getCurrentBoard(), square, board.getInitialBoard().get(square));
             }
         }
     }
     
+    private boolean assign(Map<String, Collection<Character>> currentBoard, String square, Character value) {
+        Collection<Character> otherValues = new ArrayList<Character>(currentBoard.get(square));
+        otherValues.remove(value);
+        boolean boardIsValid = true;
+        for(Character otherValue : otherValues) {
+            boardIsValid = boardIsValid && eliminate(currentBoard, square, otherValue);
+            if(!boardIsValid) return false;
+        }
+        //System.out.println("Assign " + value + " to " + square + "\n" + this.toString());
+        return boardIsValid;
+    }
+
     private boolean eliminate(Map<String, Collection<Character>> currentBoard, String square, Character value) {
         Collection<Character> possibleValuesOnSquare = currentBoard.get(square);
         if (!possibleValuesOnSquare.contains(value)) return true;
         
         possibleValuesOnSquare.remove(value);
-        //System.out.println("Eliminate " + value + " from square " + square);
         
         if(possibleValuesOnSquare.size() == 0) return false;
         
-        if(possibleValuesOnSquare.size() == 1) { //Remove possible value for peers
+        if(possibleValuesOnSquare.size() == 1) {
+            //Remove possible value for peers
             Character lastRemainingValue = possibleValuesOnSquare.toArray(new Character[1])[0];
             for(String peer : this.board.getSquarePeers().get(square)) {
                 boolean boardIsValid = eliminate(currentBoard,  peer, lastRemainingValue);
@@ -51,23 +69,6 @@ public class SudokuSolver {
         return true;
     }
     
-    private boolean assign(Map<String, Collection<Character>> currentBoard, String square, Character value) {
-        Collection<Character> otherValues = new ArrayList<Character>(currentBoard.get(square));
-        otherValues.remove(value);
-        boolean boardIsValid = true;
-        for(Character otherValue : otherValues) {
-            boardIsValid = boardIsValid && eliminate(currentBoard, square, otherValue);
-            if(!boardIsValid) return false;
-        }
-        //System.out.println("Assign " + value + " to " + square + "\n" + this.toString());
-        return boardIsValid;
-    }
-    
-    public boolean solveBoard() {
-        this.board.setCurrentBoard(performSearch(this.board.getCurrentBoard()));
-        return this.board.getCurrentBoard() != null && isBoardSolved(this.board.getCurrentBoard());
-    }
-
     private Map<String, Collection<Character>> performSearch(Map<String, Collection<Character>> currentBoard) {        
         if(currentBoard == null) return null;
         
